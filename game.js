@@ -4,11 +4,49 @@ const btnUp = document.querySelector('#up')
 const btnLeft = document.querySelector('#left')
 const btnRight = document.querySelector('#right')
 const btnDown = document.querySelector('#down')
-const spanLives=document.querySelector('#lives')
-const spanTime=document.querySelector('#Time')
-const spanRecord=document.querySelector('#Record')
-const pResult=document.querySelector('#result')
+const spanLives = document.querySelector('#lives')
+const spanTime = document.querySelector('#Time')
+const spanRecord = document.querySelector('#Record')
+const pResult = document.querySelector('#result')
+const btnWin = document.querySelector('#win-button')
+const divGameWin = document.querySelector('#div-game-win')
+const divMessages = document.querySelector('#div-messages')
+const btnPlay = document.querySelector('#btn-play')
+const btnSound = document.querySelector('#btn-sound')
 
+///////////////////////////////////win btn
+btnWin.addEventListener('click', reloadGame)
+
+function reloadGame() {
+    pResult.innerHTML = '';
+    divGameWin.classList.toggle('inactive')
+    divMessages.classList.toggle('overlap-messages')
+    /* location.reload()  */
+    level = 0;
+    lives = 3;
+    playerPosition.x = undefined
+    playerPosition.y = undefined
+    timeStart = undefined;
+    startGame();
+}
+//////////////////////////////////play btn
+btnPlay.addEventListener('click', play)
+function play() {
+    soundTrack.play()
+
+    startGame()
+    btnPlay.classList.toggle('inactive')
+
+
+}
+/////////////////////////////////sound btn
+btnSound.addEventListener('click', mute)
+function mute() {
+    soundTrack.pause();
+}
+
+
+let soundTrack = new Audio('./soundtrack.mp3')
 let canvasZise;
 let elementSize;
 let level = 0;
@@ -32,18 +70,26 @@ let enemyPositions = [];
 window.addEventListener('load', setCanvasSize)//apenas termine de cargar la pag va a ejecutar el codigo que le digamos en el addeventlistener. El objeto window representa la ventana que contiene un documento DOM;
 window.onresize = setCanvasSize;
 
+function fixNumber(n) {
+    return Number(n.toFixed(0))
+}
+
 function setCanvasSize() {
-    canvasZise = (window.innerHeight > window.innerWidth) ? window.innerWidth * 0.8 : window.innerHeight * 0.8;//si width es menor va a ser el canvas zise
+    canvasZise = (window.innerHeight > window.innerWidth) ? window.innerWidth * 0.7 : window.innerHeight * 0.7;//si width es menor va a ser el canvas zise
     //tamaño window(ventana) por 0.75 seia como 75% de la pantalla
     //innerWidth devuelve el ancho interior de la ventana en píxeles(solo lectura), setAttribute solo agrega el atributo a html
-    canvas.setAttribute('width', canvasZise)
+    canvas.setAttribute('width', canvasZise)//agrega width=32321 a el  HTML
     canvas.setAttribute('height', canvasZise)
+    canvasZise = Number(canvasZise.toFixed(0))
 
     elementSize = canvasZise / 10;//alto o ancho de el camvas dividido 10
     //se divide entre 10 para que entren 10 emojis en el canvas(orizontal o vertical)
-    startGame()
+    playerPosition.x = undefined;
+    playerPosition.y = undefined;//borramos la posicion del jugador para que luego la tome como que no tiene nada y se la reasigne
+
 }
 function startGame() {
+    timePlayer = 0
     game.font = (elementSize * 0.90) + 'px Verdana';//tamaño en pixeles con la fuente(agregamos la fuente por que es obligatoria)
     game.fontweight = 'lighter'
     game.textAlign = 'end';//para posicionar la bomba a el inicio
@@ -53,16 +99,16 @@ function startGame() {
         gameWin();
         return
     }
-    if(!timeStart){//si time start no tiene valor se lo agrega
-        timeStart=Date.now()//Dadamos el tiempo actual en ms, para saber en que ms del dia comenzo el juego  y lo guardamos en una variable (Time start)
-        timeInterval=setInterval(showTime,100) //setInterval(function,ms) establece cada cuanto sse va a ejecutar la funcion
+    if (!timeStart) {//si time start no tiene valor se lo agrega
+        timeStart = Date.now()//Dadamos el tiempo actual en ms, para saber en que ms del dia comenzo el juego  y lo guardamos en una variable (Time start)
+        timeInterval = setInterval(showTime, 100) //setInterval(function,ms) establece cada cuanto sse va a ejecutar la funcion
         showRecord();
     }
 
 
     const mapRows = map.trim().split('\n') //trim quita los espacios al inicio y final, split crea un arreglo y separa los metodos por cada '\n' salto de linea
     const mapRowsCols = mapRows.map(row => row.trim().split(''))//esto va a hacer que cada map se vuelva un arreglo donde cada letra sea un elemento
-    
+
     showLives()
     enemyPositions = [];
     game.clearRect(0, 0, canvasZise, canvasZise)
@@ -92,7 +138,7 @@ function startGame() {
             game.fillText(emoji, posX, posY);
         })
     });
-    movePlayer()//para que se renderize el jugador apenas termine de cargar el mapa
+    movePlayer()//palevelFailra que se renderize el jugador apenas termine de cargar el mapa
 }
 
 function movePlayer() {
@@ -130,7 +176,7 @@ function levelFail() {
     if (lives <= 0) {
         level = 0;
         lives = 3;
-        timeStart=undefined;
+        timeStart = undefined;
     }
     playerPosition.x = undefined
     playerPosition.y = undefined
@@ -139,39 +185,41 @@ function levelFail() {
 function gameWin() {
     console.log('Ganaste el juego ez!');
     clearInterval(timeInterval); //para la funccion que se aloja en la variable timeInterval (funccion que repite x funcion cada x ms)
-    const recordTime=localStorage.getItem('record_time');
-    const playerTime=Date.now()-timeStart;
+    const recordTime = localStorage.getItem('record_time');
+    const playerTime = Date.now() - timeStart;
 
-    if (recordTime){//si record time existe,(yo creo que es si redotime tiene un valor)
-        if(recordTime>=playerTime){//si el timpo anterior es mayor a el nuevo
-            localStorage.setItem('record_time',playerTime);//agrega el nuevo tiempo como record
-            pResult.innerHTML='Superaste el record';
-        }else{
-            pResult.innerHTML='lo siento no superaste el record :(';
+    if (recordTime) {//si record time existe,(yo creo que es si redotime tiene un valor)
+        if (recordTime >= playerTime) {//si el timpo anterior es mayor a el nuevo
+            localStorage.setItem('record_time', playerTime);//agrega el nuevo tiempo como record
+            pResult.innerHTML = 'Record personal Superdado';
+        } else {
+            pResult.innerHTML = 'Record personal no superdado';
         }
-    }else{//si no habia un record antes
-        localStorage.setItem('record_time',playerTime)
-        pResult.innerHTML='Primera vez? Muy BiquadFilterNode, pero ahora trata de susperar tu tiempo'
+    } else {//si no habia un record antes
+        localStorage.setItem('record_time', playerTime)
+        pResult.innerHTML = 'Primera vez? Muy BiquadFilterNode, pero ahora trata de susperar tu tiempo'
     }
-    console.log({recordTime,playerTime});
+    console.log({ recordTime, playerTime });
+    divGameWin.classList.toggle('inactive')
+    divMessages.classList.toggle('overlap-messages')
 }
-function showLives(){//function para agregar corazones
-    const heartsArray=Array(lives).fill(emojis['HEART'])
+function showLives() {//function para agregar corazones
+    const heartsArray = Array(lives).fill(emojis['HEART'])
     //Array() crea un arreglo con la cantidad de elementos que diga la variable lives 
     //no entinedo muy bien fill(), pero si le mandamos solo 1 parametro lo va a repetir por cada elemento del array
-    
+
     /* spanLives.innerHTML=heartsArray;//imprime un corazon en el <span> del texto del html */
-    spanLives.innerHTML='';//limpia el span
-    heartsArray.forEach(heart=>spanLives.append(heart));
+    spanLives.innerHTML = '';//limpia el span
+    heartsArray.forEach(heart => spanLives.append(heart));
     //forEach ejecuta una funcion por cada elemento del array
     //apend permite agregar varios elementos a el html separados por 1 coma
 }
-function showTime(){
-    spanTime.innerHTML=Date.now()-timeStart
+function showTime() {
+    spanTime.innerHTML = Date.now() - timeStart
 }
-function showRecord(){
-    spanRecord.innerHTML=localStorage.getItem('record_time')
-    
+function showRecord() {
+    spanRecord.innerHTML = localStorage.getItem('record_time')
+
 }
 
 window.addEventListener('keydown', moveByKeys)    //keydown cuando apretamos la tecla, keydown cuando la soltamos
@@ -193,17 +241,18 @@ btnDown.addEventListener('click', moveDown);
 
 function moveUp() {
     console.log('Me quiero mover hacia arriba');
-    if ((playerPosition.y) < elementSize) {
+    if ((playerPosition.y - 1) < elementSize) {
         console.log('OUT');
     }
     else {
         playerPosition.y -= elementSize;
         startGame()
     }
+
 }
 function moveLeft() {
     console.log('Me quiero mover hacia izquierda');
-    if ((playerPosition.x - elementSize) < elementSize) {
+    if ((playerPosition.x - elementSize + 1) < elementSize) {
         console.log('OUT');
     } else {
         playerPosition.x -= elementSize;
@@ -227,10 +276,9 @@ function moveDown() {
     else {
         playerPosition.y += elementSize;
         startGame()
-
     }
 }
-           
+
 
 
 

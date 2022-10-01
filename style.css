@@ -1,6 +1,9 @@
 /* script{
   display: none;
 } */
+.inactive{
+  display:none
+}
 body {
   background-color: indigo;
   color: #fff;
@@ -19,6 +22,40 @@ body {
   /*original mente esto era 100*/
   width: 100vw;
 }
+#div-btn-play{
+  position: absolute;
+ /*  background-color: #1d1d1dad; */
+  width: 100%;
+  height: 30%;
+  text-align: center;
+}
+#btn-play{
+  height: 80px;
+  width: 300px;
+  font-size: 50px;
+}
+.game-win{
+  position: absolute;
+  width: 100%;
+  height: 100%;
+  background-color: #1d1d1dad;
+  text-align: center;
+}
+.game-win-anfitrion{
+  width: 100%;
+  margin-top: calc(17% - 50px) ;
+  font-size: 10rem;
+}
+.game-win-p{
+  font-size: 9rem;
+  color: #ffffffcc;
+  font: bold;
+}
+.game-win-button{
+  width: 200px;
+  height: 75px;
+  font-size: 20px;
+}
 
 canvas {
 
@@ -36,6 +73,7 @@ canvas {
   flex-wrap: wrap;
   margin: 0 auto;
   width: 100%;
+  
 }
 
 button {
@@ -63,6 +101,14 @@ button:not(:last-child) {
   width: 80%;
   max-width: 460px;
 }
+.overlap-messages{
+  position: absolute;
+  margin-top: 50%;
+  background-color: #12e9a154;
+  border-radius: 5px;
+  border: 1px solid #12e9a154;
+  padding:2px;
+}
 
 p {
   display: block;
@@ -79,7 +125,7 @@ p {
 
 @media (max-width: 440px) {
   button {
-    margin-top: 25px;
+    margin-top: 5px;
   }
 
   #up,

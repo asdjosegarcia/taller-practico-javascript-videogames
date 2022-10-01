@@ -9,17 +9,28 @@
     <link rel="stylesheet" href="style.css">
 </head>
 <div class="game-container">
-    <canvas id="game" width="" height=""></canvas>
+    <div id="div-btn-play">
+        <button id="btn-play">Play</button>
+    </div>
+    <div id='div-game-win' class="game-win inactive">
+        <p class="game-win-anfitrion">💩</p>
+        <p class="game-win-p">Ganaste!</p>
+        <button class="game-win-button" id="win-button">Volver a jugar</button>
+    </div>
+    <canvas id="game" width="" height="">
+        
+    </canvas>
     <div class="btns" >
         <button class="button" id="up">Arriba</button>
         <button class="button" id="left">Izquierda</button>
         <button class="button" id="right">Derecha</button>
         <button class="button" id="down">Abajo</button>
+        <button class="button" id="btn-sound">🔊</button>
     </div>
-    <div class="messages" >
+    <div class="messages" id="div-messages" >
         <p>Vidas:<span id="lives"></span></p>
         <p>Tiempo: ⏰<span id="Time"></span></p>
-        <p>Record: ⏰<span id="Record"></span></p>
+        <p>Record: 🏁<span id="Record"></span></p>
         <p id="result"></p>
     </div>
 </div>

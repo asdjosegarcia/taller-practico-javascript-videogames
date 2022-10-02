@@ -44,7 +44,7 @@ body {
 .game-win-anfitrion{
   width: 100%;
   margin-top: calc(17% - 50px) ;
-  font-size: 40vw;
+  font-size: 10vw;
 }
 .game-win-p{
   font-size: 10vw;
@@ -135,5 +135,8 @@ p {
   }
   .overlap-messages{
     margin-top: 68vh;
+  }
+  .game-win-anfitrion{
+    font-size: 40vw;
   }
 }

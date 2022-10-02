@@ -199,7 +199,7 @@ function gameWin() {
         }
     } else {//si no habia un record antes
         localStorage.setItem('record_time', playerTime)
-        pResult.innerHTML = 'Primera vez? Muy BiquadFilterNode, pero ahora trata de susperar tu tiempo'
+        pResult.innerHTML = 'Primera vez?'
     }
     console.log({ recordTime, playerTime });
     divGameWin.classList.toggle('inactive')

@@ -44,10 +44,10 @@ body {
 .game-win-anfitrion{
   width: 100%;
   margin-top: calc(17% - 50px) ;
-  font-size: 10rem;
+  font-size: 40vw;
 }
 .game-win-p{
-  font-size: 9rem;
+  font-size: 10vw;
   color: #ffffffcc;
   font: bold;
 }
@@ -103,7 +103,7 @@ button:not(:last-child) {
 }
 .overlap-messages{
   position: absolute;
-  margin-top: 50%;
+  margin-top: 40%;
   background-color: #12e9a154;
   border-radius: 5px;
   border: 1px solid #12e9a154;
@@ -132,5 +132,8 @@ p {
   #down {
     margin-left: 100%;
     margin-right: 100%;
+  }
+  .overlap-messages{
+    margin-top: 68vh;
   }
 }

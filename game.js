@@ -11,6 +11,7 @@ const pResult = document.querySelector('#result')
 const btnWin = document.querySelector('#win-button')
 const divGameWin = document.querySelector('#div-game-win')
 const divMessages = document.querySelector('#div-messages')
+const divBtnPlay = document.querySelector('#div-btn-play')
 const btnPlay = document.querySelector('#btn-play')
 const btnSound = document.querySelector('#btn-sound')
 
@@ -36,6 +37,7 @@ function play() {
 
     startGame()
     btnPlay.classList.toggle('inactive')
+    divBtnPlay.classList.toggle('inactive')
 
 
 }
@@ -248,7 +250,6 @@ function moveUp() {
         playerPosition.y -= elementSize;
         startGame()
     }
-
 }
 function moveLeft() {
     console.log('Me quiero mover hacia izquierda');

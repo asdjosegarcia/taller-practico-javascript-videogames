@@ -38,12 +38,12 @@ body {
   position: absolute;
   width: 100%;
   height: 100%;
-  background-color: #1d1d1dad;
+  background-color: #000000ad;
   text-align: center;
 }
 .game-win-anfitrion{
   width: 100%;
-  margin-top: calc(17% - 50px) ;
+  margin-top: calc(12% - 50px) ;
   font-size: 10vw;
 }
 .game-win-p{
@@ -116,7 +116,8 @@ p {
   width: 100%;
   font-size: 1.8rem;
   /*mio*/
-  background-color: #1d1d1d5e;
+  background-color: #0000006b;
+  box-shadow: 5px 5px 5px #00000031;
   /*mio*/
   border-radius: 5px;
   /*mio*/

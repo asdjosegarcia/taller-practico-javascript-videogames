@@ -77,21 +77,30 @@ function fixNumber(n) {
 }
 
 function setCanvasSize() {
+    playerPositionResize=[];
     canvasZise = (window.innerHeight > window.innerWidth) ? window.innerWidth * 0.7 : window.innerHeight * 0.7;//si width es menor va a ser el canvas zise
     //tamaño window(ventana) por 0.75 seia como 75% de la pantalla
     //innerWidth devuelve el ancho interior de la ventana en píxeles(solo lectura), setAttribute solo agrega el atributo a html
+    playerPositionResize.x=playerPosition.x/elementSize
+    playerPositionResize.y=playerPosition.y/elementSize
     canvas.setAttribute('width', canvasZise)//agrega width=32321 a el  HTML
     canvas.setAttribute('height', canvasZise)
     canvasZise = Number(canvasZise.toFixed(0))
-
-    elementSize = canvasZise / 10;//alto o ancho de el camvas dividido 10
+    elementSize = canvasZise / 10;//alto o ancho de el camvas dividido 1
     //se divide entre 10 para que entren 10 emojis en el canvas(orizontal o vertical)
-    playerPosition.x = undefined;
-    playerPosition.y = undefined;//borramos la posicion del jugador para que luego la tome como que no tiene nada y se la reasigne
+
+    if (timeStart && level < maps.length) { //si timeStart tiene algo   
+        playerPosition.x=playerPositionResize.x*elementSize
+        playerPosition.y=playerPositionResize.y*elementSize
+        startGame() //se ejecuta start game para que cargue el mapa 
+    } else {
+        playerPosition.x = undefined;
+        playerPosition.y = undefined; //borramos la posicion del jugador para que luego la tome como que no tiene nada y se la reasigne    
+    }
 
 }
 function startGame() {
-    timePlayer = 0
+
     game.font = (elementSize * 0.90) + 'px Verdana';//tamaño en pixeles con la fuente(agregamos la fuente por que es obligatoria)
     game.fontweight = 'lighter'
     game.textAlign = 'end';//para posicionar la bomba a el inicio
@@ -103,7 +112,8 @@ function startGame() {
     }
     if (!timeStart) {//si time start no tiene valor se lo agrega
         timeStart = Date.now()//Dadamos el tiempo actual en ms, para saber en que ms del dia comenzo el juego  y lo guardamos en una variable (Time start)
-        timeInterval = setInterval(showTime, 100) //setInterval(function,ms) establece cada cuanto sse va a ejecutar la funcion
+        clearInterval(timeInterval);
+        timeInterval = setInterval(showTime, 100) //setInterval(function,ms) establece cada cuantos ms va a ejecutar la funcion
         showRecord();
     }
 
@@ -142,6 +152,7 @@ function startGame() {
     });
     movePlayer()//palevelFailra que se renderize el jugador apenas termine de cargar el mapa
 }
+
 
 function movePlayer() {
     const giftCollisionX = playerPosition.x.toFixed(3) == giftPosition.x.toFixed(3);//un condicional if pero resumido en una variable
@@ -189,6 +200,7 @@ function gameWin() {
     clearInterval(timeInterval); //para la funccion que se aloja en la variable timeInterval (funccion que repite x funcion cada x ms)
     const recordTime = localStorage.getItem('record_time');
     const playerTime = Date.now() - timeStart;
+
 
     if (recordTime) {//si record time existe,(yo creo que es si redotime tiene un valor)
         if (recordTime >= playerTime) {//si el timpo anterior es mayor a el nuevo
@@ -279,7 +291,10 @@ function moveDown() {
         startGame()
     }
 }
-
+ //1) se preoduce si el usuario perdio las 3 vidas alguna vez, el tiempo sigue corriendo
+ //se resolvio poniendo clearInterval(timeInterval); sobre timeInterval = setInterval(showTime, 100) linea 111 aproximadamente
+ //2) se produce al hacer resize, todo lo que esta dentro del cambas desaparece
+ //
 
 
 
@@ -292,3 +307,4 @@ function moveDown() {
     //game.fillStyle = 'purple'//color de letra
     //game.textAlign ='right';//posicion de textp
     //game.fillText('Platzi', 25, 25)//tamaño de area de texto
+    //localStorage.setItem //setItem agrega un item, removeItem borra el item, getItem lee el item

@@ -4,10 +4,11 @@ const emojis = {
   'X': '💣',
   'I': '🎁',
   'PLAYER': '💀',//💩
-  'BOMB_COLLISION': '🔥',
+  'FIRE': '🔥',
   'GAME_OVER': '👎',
   'WIN': '🏆',
   'HEART':'🖤',
+  'BURST':'💥',
 }; const maps = []; maps.push(`
   IXXXXXXXXX
   -XXXXXXXXX

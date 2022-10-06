@@ -15,10 +15,42 @@ const divBtnPlay = document.querySelector('#div-btn-play')
 const btnPlay = document.querySelector('#btn-play')
 const btnSound = document.querySelector('#btn-sound')
 
+let canvasZise;
+let elementSize;
+let level = 0;
+let lives = 3;
+
+let timeStart;
+let timePlayer;
+let timeInterval;
+
+//animations
+let levelFailInterval;
+let dispersionAnimationInteval;
+
+//sounds
+let soundClick=new Audio('./sounds/click.mp3')
+let soundTrack = new Audio('./sounds/soundtrack.mp3')
+let soundExplosion= new Audio('./sounds/explosionSound2.mp3')
+let soundLvlPass=new Audio('./sounds/lvlPass.mp3')
+
+const playerPosition = {//aunque sea const se pueden cambiar las propiedades de los atributos del objeto
+    y: undefined,
+    x: undefined,
+}
+const giftPosition = {
+    x: undefined,
+    y: undefined,
+}
+
+let enemyPositions = [];
+window.addEventListener('load', setCanvasSize)//apenas termine de cargar la pag va a ejecutar el codigo que le digamos en el addeventlistener. El objeto window representa la ventana que contiene un documento DOM;
+window.onresize = setCanvasSize;
 ///////////////////////////////////win btn
 btnWin.addEventListener('click', reloadGame)
 
 function reloadGame() {
+    soundClick.play()
     pResult.innerHTML = '';
     divGameWin.classList.toggle('inactive')
     divMessages.classList.toggle('overlap-messages')
@@ -33,8 +65,8 @@ function reloadGame() {
 //////////////////////////////////play btn
 btnPlay.addEventListener('click', play)
 function play() {
+    soundClick.play()
     soundTrack.play()
-
     startGame()
     btnPlay.classList.toggle('inactive')
     divBtnPlay.classList.toggle('inactive')
@@ -48,41 +80,17 @@ function mute() {
 }
 
 
-let soundTrack = new Audio('./soundtrack.mp3')
-let canvasZise;
-let elementSize;
-let level = 0;
-let lives = 3;
-
-let timeStart;
-let timePlayer;
-let timeInterval;
-
-
-const playerPosition = {//aunque sea const se pueden cambiar las propiedades de los atributos del objeto
-    y: undefined,
-    x: undefined,
-}
-const giftPosition = {
-    x: undefined,
-    y: undefined,
-}
-
-let enemyPositions = [];
-window.addEventListener('load', setCanvasSize)//apenas termine de cargar la pag va a ejecutar el codigo que le digamos en el addeventlistener. El objeto window representa la ventana que contiene un documento DOM;
-window.onresize = setCanvasSize;
-
 function fixNumber(n) {
     return Number(n.toFixed(0))
 }
 
 function setCanvasSize() {
-    playerPositionResize=[];
+    playerPositionResize = [];
     canvasZise = (window.innerHeight > window.innerWidth) ? window.innerWidth * 0.7 : window.innerHeight * 0.7;//si width es menor va a ser el canvas zise
     //tamaño window(ventana) por 0.75 seia como 75% de la pantalla
     //innerWidth devuelve el ancho interior de la ventana en píxeles(solo lectura), setAttribute solo agrega el atributo a html
-    playerPositionResize.x=playerPosition.x/elementSize
-    playerPositionResize.y=playerPosition.y/elementSize
+    playerPositionResize.x = playerPosition.x / elementSize
+    playerPositionResize.y = playerPosition.y / elementSize
     canvas.setAttribute('width', canvasZise)//agrega width=32321 a el  HTML
     canvas.setAttribute('height', canvasZise)
     canvasZise = Number(canvasZise.toFixed(0))
@@ -90,8 +98,8 @@ function setCanvasSize() {
     //se divide entre 10 para que entren 10 emojis en el canvas(orizontal o vertical)
 
     if (timeStart && level < maps.length) { //si timeStart tiene algo   
-        playerPosition.x=playerPositionResize.x*elementSize
-        playerPosition.y=playerPositionResize.y*elementSize
+        playerPosition.x = playerPositionResize.x * elementSize
+        playerPosition.y = playerPositionResize.y * elementSize
         startGame() //se ejecuta start game para que cargue el mapa 
     } else {
         playerPosition.x = undefined;
@@ -100,6 +108,10 @@ function setCanvasSize() {
 
 }
 function startGame() {
+    window.addEventListener('keydown', moveByKeys)    //keydown cuando apretamos la tecla, keydown cuando la soltamos
+    clearInterval(dispersionAnimationInteval);
+    clearInterval(levelFailInterval);
+    movementDisabled(false)
 
     game.font = (elementSize * 0.90) + 'px Verdana';//tamaño en pixeles con la fuente(agregamos la fuente por que es obligatoria)
     game.fontweight = 'lighter'
@@ -165,10 +177,14 @@ function movePlayer() {
     const enemyCollision = enemyPositions.find(enemy => {//recorre el array y devuelve el primer elemento que coincida con la busqueda
         const enemyCollisionX = enemy.x.toFixed(3) == playerPosition.x.toFixed(3)//enemycollisionX guanda true o false
         const enemyCollisionY = enemy.y.toFixed(3) == playerPosition.y.toFixed(3)
-        return enemyCollisionX && enemyCollisionY;//sulta las 2 variables
+        return enemyCollisionX && enemyCollisionY;//suelta las 2 variables como true o false 
     })
+
     if (enemyCollision) {
-        levelFail();
+        movementDisabled(true)
+        collisionAnimation()
+        levelFailInterval = setInterval(levelFail, 2600);
+
     }
 
     game.fillText(emojis['PLAYER'], playerPosition.x,
@@ -178,10 +194,45 @@ function movePlayer() {
             console.log('Ganaste pedazo de aca! :D');
         } */
 }
+function collisionAnimation() {
+    /* soundTrack.pause() */
+    i = 0
+    game.fillText(emojis['BURST'], playerPosition.x, playerPosition.y);
+    dispersionAnimationInteval = setInterval(dispersionAnimation, 300)
+    function dispersionAnimation() {
+        soundExplosion.play()
+        console.log(i);
+        if (i < 10) {
+            i++
+            game.fillText(emojis['BURST'], playerPosition.x + (elementSize * i), playerPosition.y + (elementSize * i));//a=explosion abajo a la derecha
+            game.fillText(emojis['BURST'], playerPosition.x - (elementSize * i), playerPosition.y - (elementSize * i));//arriba derecha
+            game.fillText(emojis['BURST'], playerPosition.x - (elementSize * i), playerPosition.y + (elementSize * i));//abajo izquierda
+            game.fillText(emojis['BURST'], playerPosition.x + (elementSize * i), playerPosition.y - (elementSize * i));//arriba izquierda
+        }
+    };
 
+
+
+
+}
+
+function movementDisabled(status) {
+    btnUp.disabled = status
+    btnDown.disabled = status
+    btnRight.disabled = status
+    btnLeft.disabled = status
+    if(status==true){
+        window.removeEventListener('keydown',moveByKeys)
+    }
+    else{
+        window.addEventListener('keydown',moveByKeys)
+    }
+    
+}
 function levelWin() {
     console.log('Subiste de lvl ckackx2');
     level++;
+    soundLvlPass.play()
     startGame()
 };
 function levelFail() {
@@ -193,7 +244,10 @@ function levelFail() {
     }
     playerPosition.x = undefined
     playerPosition.y = undefined
+    movementDisabled(false);
     startGame();
+    
+
 }
 function gameWin() {
     console.log('Ganaste el juego ez!');
@@ -236,7 +290,7 @@ function showRecord() {
 
 }
 
-window.addEventListener('keydown', moveByKeys)    //keydown cuando apretamos la tecla, keydown cuando la soltamos
+
 
 function moveByKeys(event) {//event es la tecla que recive gracias a keydown
     /* console.log(event); //muestra la tecla que precionamos */
